@@ -53,9 +53,6 @@ runs:
     RUN_FLAGS: ${{ inputs.run-flags }}
     SCRIPT_FILEPATH: ${{ inputs.script-filepath }}
     ENV_VARS_FLAG: ${{ inputs.env-vars-flags }}
-  args:
-    - arg1
-    - arg2
 
   # - name: Store html report
   #   if: always()
