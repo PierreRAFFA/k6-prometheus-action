@@ -19,12 +19,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install k6
-        run: |
-          CGO_ENABLED=0 go install go.k6.io/xk6/cmd/xk6@latest && \
-          CGO_ENABLED=0 xk6 build \
-            --with github.com/grafana/xk6-output-prometheus-remote@latest \
-            --output /tmp/k6
+      - name: Build
+        id: build
+        uses: szkiba/xk6bundler@v0
+        with:
+          platform: linux/amd64
+          with: |
+            github.com/szkiba/xk6-prometheus@v0.1.6
       - name: Run Load Test
         uses: ./.github/actions/k6-prometheus-action
         with:
