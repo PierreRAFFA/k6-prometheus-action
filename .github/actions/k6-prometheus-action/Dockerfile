@@ -8,6 +8,6 @@ RUN CGO_ENABLED=0 go install go.k6.io/xk6/cmd/xk6@latest  \
 
 USER 0
 COPY entrypoint.sh /entrypoint.sh
-COPY slack.sh /slack.sh
+COPY slack.js /slack.js
 
 ENTRYPOINT ["/entrypoint.sh"]
