@@ -45,14 +45,14 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  env:
-    PROMETHEUS_REMOTE_WRITE_URL: ${{ inputs.prometheus-remote-write-url }}
-    PROJECT: ${{ inputs.project }}
-    ENVIRONMENT: ${{ inputs.environment }}
-    AUTHOR: ${{ inputs.author }}
-    RUN_FLAGS: ${{ inputs.run-flags }}
-    SCRIPT_FILEPATH: ${{ inputs.script-filepath }}
-    ENV_VARS_FLAG: ${{ inputs.env-vars-flags }}
+  # env:
+  #   PROMETHEUS_REMOTE_WRITE_URL: ${{ inputs.prometheus-remote-write-url }}
+  #   PROJECT: ${{ inputs.project }}
+  #   ENVIRONMENT: ${{ inputs.environment }}
+  #   AUTHOR: ${{ inputs.author }}
+  #   RUN_FLAGS: ${{ inputs.run-flags }}
+  #   SCRIPT_FILEPATH: ${{ inputs.script-filepath }}
+  #   ENV_VARS_FLAG: ${{ inputs.env-vars-flags }}
 
   # - name: Store html report
   #   if: always()
