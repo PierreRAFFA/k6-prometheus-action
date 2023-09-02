@@ -11,5 +11,4 @@ k6 run \
     -e AUTHOR=$INPUT_AUTHOR \
     ${INPUT_RUN-FLAGS} \
     --out xk6-prometheus-rw \
-    ${INPUT_SCRIPT-FILEPATH} \
-    ${INPUT_ENV-VARS-FLAG}
+    ${INPUT_SCRIPT-FILEPATH}

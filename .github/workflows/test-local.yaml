@@ -26,9 +26,8 @@ jobs:
           project: MyProject
           environment: production
           author: Pierre-Raffa
-          run-flags: -u 5 -d 10s
+          run-flags: -u 5 -d 10s -e VAR1=value1 -e VAR2=value2 -e VAR3=value3
           # Don't forget backslash at the end of each line, except for the last one
-          env-vars-flags: -e VAR1=value1 -e VAR2=value2 -e VAR3=value3
           script-filepath: ./.github/workflows/script.js
           slack-channel: load-tests
           slack-token: xoxb-qwertyuiop123456
