@@ -1,0 +1,84 @@
+name: 'k6'
+description: 'Run Performance Test using k6'
+branding:
+  icon: 'alert-octagon'
+  color: 'green'
+inputs:
+  prometheus-remote-write-url:
+    description: 'Specifies Prometheus Remote Write URL used by k6 to send the metrics to (http://...../api/v1/write)'
+    required: true
+  project:
+    description: 'Allows to organise performance tests across teams'
+    required: true
+  environment:
+    required: true
+  author:
+    description: 'Specifies the author of the run'
+    required: true
+  run-flags: 
+    # Run a single VU, 10 times.
+    # k6 run -i 10 script.js
+
+    # Run 5 VUs, splitting 10 iterations between them.
+    # k6 run -u 5 -i 10 script.js
+
+    # Run 5 VUs for 10s.
+    # k6 run -u 5 -d 10s script.js
+
+    # Ramp VUs from 0 to 100 over 10s, stay there for 60s, then 10s down to 0.
+    # k6 run -u 0 -s 10s:100 -s 60s -s 10s:0
+    description: 'Specifies a list of flags to apply to k6 run'
+    required: true
+    default: '-i 1 -u 1'
+  env-vars-flags:
+    description: 'Specifies the list of additional env vars to apply to k6 run i.e. `-e OAUTH2_CLIENT_ID=clientID`'
+    required: false
+  script-filepath:
+    description: 'Specifies the script filepath to execute'
+    required: true
+  slack-channel:
+    description: 'Specifies the slack channel to notify'
+    required: false
+  slack-token:
+    description: 'Specifies the slack App token'
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    PROMETHEUS_REMOTE_WRITE_URL: ${{ inputs.prometheus-remote-write-url }}
+    PROJECT: ${{ inputs.project }}
+    ENVIRONMENT: ${{ inputs.environment }}
+    AUTHOR: ${{ inputs.author }}
+    RUN_FLAGS: ${{ inputs.run-flags }}
+    SCRIPT_FILEPATH: ${{ inputs.script-filepath }}
+    ENV_VARS_FLAG: ${{ inputs.env-vars-flags }}
+  args:
+    - arg1
+    - arg2
+
+  # - name: Store html report
+  #   if: always()
+  #   uses: actions/upload-artifact@v2
+  #   with:
+  #     name: summary.html 
+  #     path: summary.html
+
+  # - name: Store json report
+  #   if: always()
+  #   uses: actions/upload-artifact@v2
+  #   with: 
+  #     name: summary.json
+  #     path: summary.json
+
+  # - name: Notify Slack Channel
+  #   if: always()
+  #   shell: bash
+  #   run: |
+  #     node actions/k6/slack.js \
+  #       '${{ inputs.project }}' \
+  #       '${{ inputs.environment }}' \
+  #       '${{ steps.run.outputs.testId }}' \
+  #       '${{ inputs.author }}' \
+  #       '${{ inputs.slack-channel }}' \
+  #       '${{ inputs.slack-token }}'
