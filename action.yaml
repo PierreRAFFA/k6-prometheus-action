@@ -5,7 +5,7 @@ branding:
   color: 'green'
 inputs:
   prometheus-remote-write-url:
-    description: 'Specifies Prometheus Remote Write URL used by k6 to send the metrics to (ex: http://your-prometheus-server.com/api/v1/write)'
+    description: 'Specifies Prometheus Remote Write URL used by k6 to send the metrics to (http://...../api/v1/write)'
     required: true
   project:
     description: 'Allows to organise performance tests across teams'
@@ -43,48 +43,42 @@ inputs:
     description: 'Specifies the slack App token'
     required: false
 runs:
-  using: 'composite'
-  steps:
-  - name: Run
-    id: run
-    shell: bash
-    run: |
-      testId="${{ inputs.environment }}_$(date --utc +%F_%T)"
-      echo "##[set-output name=testId;]$(echo ${testId})"
-      K6_PROMETHEUS_RW_SERVER_URL=${{ prometheus-remote-write-url }} \
-      K6_PROMETHEUS_RW_TREND_STATS='p(99),p(95),p(90),max,min,avg,count,sum' \
-      k6 run \
-        -e PROJECT=${{ inputs.project }} \
-        -e ENVIRONMENT=${{ inputs.environment }} \
-        -e TEST_ID=${testId} \
-        -e AUTHOR=${{ inputs.author }} \
-        ${{ inputs.run-flags }} \
-        --out xk6-prometheus-rw \
-        ${{ inputs.script-filepath }} \
-        ${{ inputs.env-vars-flags }}
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    PROMETHEUS_REMOTE_WRITE_URL: ${{ inputs.prometheus-remote-write-url }}
+    PROJECT: ${{ inputs.project }}
+    ENVIRONMENT: ${{ inputs.environment }}
+    AUTHOR: ${{ inputs.author }}
+    RUN_FLAGS: ${{ inputs.run-flags }}
+    SCRIPT_FILEPATH: ${{ inputs.script-filepath }}
+    ENV_VARS_FLAG: ${{ inputs.env-vars-flags }}
+  args:
+    - arg1
+    - arg2
 
-  - name: Store html report
-    if: always()
-    uses: actions/upload-artifact@v2
-    with:
-      name: summary.html 
-      path: summary.html
+  # - name: Store html report
+  #   if: always()
+  #   uses: actions/upload-artifact@v2
+  #   with:
+  #     name: summary.html 
+  #     path: summary.html
 
-  - name: Store json report
-    if: always()
-    uses: actions/upload-artifact@v2
-    with: 
-      name: summary.json
-      path: summary.json
+  # - name: Store json report
+  #   if: always()
+  #   uses: actions/upload-artifact@v2
+  #   with: 
+  #     name: summary.json
+  #     path: summary.json
 
-  - name: Notify Slack Channel
-    if: always()
-    shell: bash
-    run: |
-      node ${GITHUB_ACTION_PATH}/slack.js \
-        '${{ inputs.project }}' \
-        '${{ inputs.environment }}' \
-        '${{ steps.run.outputs.testId }}' \
-        '${{ inputs.author }}' \
-        '${{ inputs.slack-channel }}' \
-        '${{ inputs.slack-token }}'
+  # - name: Notify Slack Channel
+  #   if: always()
+  #   shell: bash
+  #   run: |
+  #     node actions/k6/slack.js \
+  #       '${{ inputs.project }}' \
+  #       '${{ inputs.environment }}' \
+  #       '${{ steps.run.outputs.testId }}' \
+  #       '${{ inputs.author }}' \
+  #       '${{ inputs.slack-channel }}' \
+  #       '${{ inputs.slack-token }}'
