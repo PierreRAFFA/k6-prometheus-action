@@ -25,7 +25,7 @@ jobs:
         with:
           platform: linux/amd64
           with: |
-            github.com/szkiba/xk6-prometheus@v0.1.6
+            github.com/szkiba/xk6-prometheus@latest
       - name: Run Load Test
         uses: ./.github/actions/k6-prometheus-action
         with:
