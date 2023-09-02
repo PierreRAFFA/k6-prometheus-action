@@ -1,0 +1,44 @@
+name: Test-Local
+
+on:
+  pull_request:
+    branches:
+    - main
+  merge_group:
+    types:
+    - checks_requested
+    branches:
+    - main
+  push:
+    branches:
+    - main
+
+jobs:
+  k6-prometheus:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install k6
+        run: |
+          CGO_ENABLED=0 go install go.k6.io/xk6/cmd/xk6@latest && \
+          CGO_ENABLED=0 xk6 build \
+            --with github.com/grafana/xk6-output-prometheus-remote@latest \
+            --output /tmp/k6
+      - name: Run Load Test
+        uses: ./.github/actions/k6-prometheus-action
+        with:
+          prometheus-remote-write-url: http://your.prometheus.server.com/api/v1/write
+          project: MyProject
+          environment: production
+          author: Pierre-Raffa
+          run-flags: -u 5 -d 10s
+          # Don't forget backslash at the end of each line, except for the last one
+          env-vars-flags: |
+            -e VAR1=value1 \
+            -e VAR2=value2 \
+            -e VAR3=value3
+          script-filepath: ./.github/workflows/script.js
+          slack-channel: load-tests
+          slack-token: xoxb-qwertyuiop123456
+          grafana-dashboard-url: https://your.grafana.server.com/d/k6-load-tests/k6-load-tests?orgId=1
