@@ -19,13 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build
-        id: build
-        uses: szkiba/xk6bundler@v0
-        with:
-          platform: linux/amd64
-          with: |
-            github.com/szkiba/xk6-prometheus@latest
       - name: Run Load Test
         uses: ./.github/actions/k6-prometheus-action
         with:
